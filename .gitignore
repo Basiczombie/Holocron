@@ -1,0 +1,5 @@
+/node_modules
+.eslintrc.js
+yarn-error.log
+yarn.lock
+/src/public/
