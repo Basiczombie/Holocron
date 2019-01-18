@@ -18,9 +18,9 @@ const config = {
     ]
   },
   output: {
-    path: path.resolve(__dirname, './src/public'),
+    path: path.resolve(__dirname, './src/public/'),
     filename: `[name].bundle.js`,
-    publicPath: 'http://localhost:3000'
+    publicPath: '/'
   },
   performance: {
     hints: false
@@ -58,14 +58,7 @@ const config = {
         }
       },
       {
-        test: /\.css$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          'css-loader'
-        ]
-      },
-      {
-        test: /\.scss$/,
+        test: /\.(sc|c)ss$/,
         use: [
           'css-hot-loader',
           {
@@ -134,10 +127,7 @@ const config = {
       'src',
       'node_modules'
     ],
-    extensions: ['.js', '.mjs'],
-    alias: {
-      milligram: path.join(__dirname, '/node_modules/milligram/dist/milligram.css')
-    }
+    extensions: ['.js', '.mjs']
   },
   devServer: {
     headers: {
