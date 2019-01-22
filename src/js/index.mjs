@@ -33,7 +33,7 @@ $(() => {
     }
   })
 
-  // TODO build function to count and update child elements.
+  // TODO build function to count and update count on header.
   containers.forEach(el => {
     let count = el.getElementsByTagName('*').length
   })
