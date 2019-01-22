@@ -1,23 +1,28 @@
 import $ from 'jquery'
-import dragula from 'dragula'
 import 'dragula_css'
 import '../css/template.scss'
 import 'milligram'
-import fetch from 'isomorphic-fetch'
-import decode from 'he'
+import dragula from 'dragula'
 import students from '../public/json/students.json'
 import teachers from '../public/json/teachers.json'
+// import fetch from 'isomorphic-fetch'
+// import decode from 'he'
 
 $(() => {
-  function htmlDecodeToJson (resp) {
-    return resp.text().then(resp => decode(resp)).then(resp => JSON.parse(resp))
-  }
+  // function htmlDecodeToJson (resp) {
+  //   return resp.text().then(resp => decode(resp)).then(resp => JSON.parse(resp))
+  // }
 
-  // Read Json Files
-  let studentList = fetch(students)
-    .then(htmlDecodeToJson)
-  let teacherList = fetch(teachers)
-    .then(htmlDecodeToJson)
+  // // Read Json Files
+  // let studentList = fetch(students)
+  //   .then(htmlDecodeToJson)
+  // let teacherList = fetch(teachers)
+  //   .then(htmlDecodeToJson)
+
+  let studentList = JSON.parse(students)
+  let teacherList = JSON.parse(teachers)
+
+  console.log(studentList)
 
   // List of columns to watch.
   let containers = [
