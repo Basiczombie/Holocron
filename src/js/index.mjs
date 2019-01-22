@@ -5,24 +5,19 @@ import '../css/template.scss'
 import 'milligram'
 import fetch from 'isomorphic-fetch'
 import decode from 'he'
+import students from '../public/json/students.json'
+import teachers from '../public/json/teachers.json'
 
 $(() => {
   function htmlDecodeToJson (resp) {
     return resp.text().then(resp => decode(resp)).then(resp => JSON.parse(resp))
   }
 
-  let path = {
-    'students': 'public/json/students.json',
-    'teachers': 'public/json/teachers.json'
-  }
-
   // Read Json Files
-  let students = fetch(path.students)
+  let studentList = fetch(students)
     .then(htmlDecodeToJson)
-  let teachers = fetch(path.teachers)
+  let teacherList = fetch(teachers)
     .then(htmlDecodeToJson)
-
-  console.log(students)
 
   // List of columns to watch.
   let containers = [
