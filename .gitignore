@@ -2,4 +2,6 @@
 .eslintrc.js
 yarn-error.log
 yarn.lock
-/src/public/
+/src/public/assets
+/src/public/fonts
+/src/public/images

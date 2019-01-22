@@ -3,8 +3,27 @@ import dragula from 'dragula'
 import 'dragula_css'
 import '../css/template.scss'
 import 'milligram'
+import fetch from 'isomorphic-fetch'
+import decode from 'he'
 
 $(() => {
+  function htmlDecodeToJson (resp) {
+    return resp.text().then(resp => decode(resp)).then(resp => JSON.parse(resp))
+  }
+
+  let path = {
+    'students': 'public/json/students.json',
+    'teachers': 'public/json/teachers.json'
+  }
+
+  // Read Json Files
+  let students = fetch(path.students)
+    .then(htmlDecodeToJson)
+  let teachers = fetch(path.teachers)
+    .then(htmlDecodeToJson)
+
+  console.log(students)
+
   // List of columns to watch.
   let containers = [
     document.querySelector('#students'),
@@ -14,27 +33,29 @@ $(() => {
   ]
 
   // Drag and Drop functionallity
-  dragula({
+  let drake = dragula({
     // Feeds the list of containers to dragula.
     containers: containers,
-    // If not slotted into proper column delete the copy.
-    removeOnSpill: true,
-    // Copies one element from column into another column.
-    copy: function (el, source) {
-      return source === document.querySelector('#students')
-    },
-    // Prevents copied element from being added back to source.
-    accepts: function (el, target) {
-      return target !== document.querySelector('#students')
-    },
+    // If not slotted into proper container restore to current container.
+    revertOnSpill: true,
     // Prevents the first element from being dragged.
     moves: function (el, source) {
       return !el.classList.contains('no-drag')
     }
   })
 
-  // TODO build function to count and update count on header.
-  containers.forEach(el => {
-    let count = el.getElementsByTagName('*').length
+  refreshCounts()
+
+  // Counts total children in parent element and returns count.
+  drake.on('drop', (el, target, source, sibling) => {
+    refreshCounts()
   })
+
+  function refreshCounts () {
+    containers.forEach(el => {
+      let count = el.querySelectorAll('.student').length
+      let elHeader = el.querySelector('.count')
+      elHeader.textContent = `(${count})`
+    })
+  }
 })

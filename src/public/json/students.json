@@ -1,0 +1,38 @@
+[
+    {
+        "firstlast": "Anderson, Tommy",
+        "dcid": 1234567,
+        "grade_level": 6,
+        "gender": "male"
+    },
+    {
+        "firstlast": "Jolly, Heather",
+        "dcid": 2345678,
+        "grade_level": 6,
+        "gender": "female"
+    },
+    {
+        "firstlast": "Gibbs, Abby",
+        "dcid": 3456789,
+        "grade_level": 6,
+        "gender": "other"
+    },
+    {
+        "firstlast": "Drake, John",
+        "dcid": 4567890,
+        "grade_level": 6,
+        "gender": "male"
+    },
+    {
+        "firstlast": "Ford, Zoey",
+        "dcid": 2345234,
+        "grade_level": 6,
+        "gender": "female"
+    },
+    {
+        "firstlast": "Peterson, Adrian",
+        "dcid": 32456723,
+        "grade_level": 6,
+        "gender": "other"
+    }
+]
