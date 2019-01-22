@@ -127,7 +127,10 @@ const config = {
       'src',
       'node_modules'
     ],
-    extensions: ['.js', '.mjs']
+    extensions: ['.js', '.mjs', '.scss', '.css'],
+    alias: {
+      dragula_css: path.join(__dirname, '/node_modules/dragula/dist/dragula.css')
+    }
   },
   devServer: {
     headers: {
