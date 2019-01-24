@@ -19,18 +19,39 @@ $(() => {
   // let teacherList = fetch(teachers)
   //   .then(htmlDecodeToJson)
 
-  let studentList = JSON.parse(students)
-  let teacherList = JSON.parse(teachers)
-
-  console.log(studentList)
-
-  // List of columns to watch.
+  // List of containers to watch.
   let containers = [
-    document.querySelector('#students'),
-    document.querySelector('#teacher-one'),
-    document.querySelector('#teacher-two'),
-    document.querySelector('#teacher-three')
+    document.querySelector('#students')
   ]
+
+  // Dynamically set Teachers.
+  let main = document.querySelector('.index')
+  let teacherList = Object.entries(teachers)
+  teacherList.forEach(([key, value]) => {
+    let teacherNumber = `teacher-${key}`
+    let teacherTemplate = `
+      <div id="${teacherNumber}" class="column container">
+        <h4 class="no-drag">${value.name}<span class="count"></span></h4>
+      </div>
+    `
+    main.insertAdjacentHTML('beforeend', `${teacherTemplate}`)
+    containers.push(document.querySelector(`#${teacherNumber}`))
+  })
+
+  // Dynamically set Students.
+  let studentColumn = document.querySelector('#students')
+  let studentList = Object.entries(students)
+  studentList.forEach(([key, value]) => {
+    let studentTemplate = `
+      <div id="${value.dcid}" class="student">
+        <blockquote>
+          ${value.firstlast}<br>
+          Gender:<span> ${value.gender}</span>
+        </blockquote>
+      </div>
+    `
+    studentColumn.insertAdjacentHTML('beforeend', `${studentTemplate}`)
+  })
 
   // Drag and Drop functionallity
   let drake = dragula({
@@ -44,9 +65,8 @@ $(() => {
     }
   })
 
-  refreshCounts()
-
   // Counts total children in parent element and returns count.
+  refreshCounts()
   drake.on('drop', (el, target, source, sibling) => {
     refreshCounts()
   })
@@ -55,7 +75,7 @@ $(() => {
     containers.forEach(el => {
       let count = el.querySelectorAll('.student').length
       let elHeader = el.querySelector('.count')
-      elHeader.textContent = `(${count})`
+      elHeader.textContent = ` (${count})`
     })
   }
 })
