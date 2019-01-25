@@ -23,30 +23,49 @@ $(() => {
   let containers = [
     document.querySelector('#students')
   ]
-
+  console.log(containers)
   // Dynamically set Teachers.
-  let main = document.querySelector('.index')
+  let main = document.querySelector('#teachers')
   let teacherList = Object.entries(teachers)
+  let count = 0
+  let rowCount = 0
   teacherList.forEach(([key, value]) => {
+    if (count % 3 === 0) {
+      rowCount++
+      let rowTemplate = `
+      <div class="row row-style" id="teacher-row-${rowCount}"></div>
+    `
+      main.insertAdjacentHTML('beforeend', `${rowTemplate}`)
+    }
+    let rowInsert = document.querySelector(`#teacher-row-${rowCount}`)
     let teacherNumber = `teacher-${key}`
     let teacherTemplate = `
-      <div id="${teacherNumber}" class="column container">
-        <h4 class="no-drag">${value.name}<span class="count"></span></h4>
+      <div id="${teacherNumber}" class="column drake-container">
+        <h4 class="no-drag">${value.name}<span class="count"></span>
       </div>
     `
-    main.insertAdjacentHTML('beforeend', `${teacherTemplate}`)
+    rowInsert.insertAdjacentHTML('beforeend', `${teacherTemplate}`)
     containers.push(document.querySelector(`#${teacherNumber}`))
+    count++
   })
 
   // Dynamically set Students.
   let studentColumn = document.querySelector('#students')
   let studentList = Object.entries(students)
   studentList.forEach(([key, value]) => {
+    let gender
+    if (value.gender === 'male') {
+      gender = 'blue'
+    } else if (value.gender === 'female') {
+      gender = 'pink'
+    } else {
+      gender = 'purple'
+    }
     let studentTemplate = `
       <div id="${value.dcid}" class="student">
-        <blockquote>
+        <blockquote class="${gender}">
           ${value.firstlast}<br>
-          Gender:<span> ${value.gender}</span>
+          Gender: ${value.gender}
         </blockquote>
       </div>
     `
