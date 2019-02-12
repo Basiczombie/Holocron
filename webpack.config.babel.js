@@ -129,7 +129,8 @@ const config = {
     ],
     extensions: ['.js', '.mjs', '.scss', '.css'],
     alias: {
-      dragula_css: path.join(__dirname, '/node_modules/dragula/dist/dragula.css')
+      dragula_css: path.join(__dirname, '/node_modules/dragula/dist/dragula.css'),
+      tingle_css: path.join(__dirname, '/node_modules/tingle.js/dist/tingle.css')
     }
   },
   devServer: {

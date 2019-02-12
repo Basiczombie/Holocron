@@ -1,38 +1,50 @@
 [
     {
+        "firstlast": "Robinson, Billy",
+        "dcid": 4321542,
+        "grade_level": 0,
+        "gender": "male"
+    },
+    {
         "firstlast": "Anderson, Tommy",
         "dcid": 1234567,
-        "grade_level": 6,
+        "grade_level": 1,
         "gender": "male"
     },
     {
         "firstlast": "Jolly, Heather",
         "dcid": 2345678,
-        "grade_level": 6,
+        "grade_level": 2,
         "gender": "female"
     },
     {
         "firstlast": "Gibbs, Abby",
         "dcid": 3456789,
-        "grade_level": 6,
+        "grade_level": 3,
         "gender": "other"
     },
     {
         "firstlast": "Drake, John",
         "dcid": 4567890,
-        "grade_level": 6,
+        "grade_level": 4,
         "gender": "male"
     },
     {
         "firstlast": "Ford, Zoey",
         "dcid": 2345234,
-        "grade_level": 6,
+        "grade_level": 5,
         "gender": "female"
     },
     {
         "firstlast": "Peterson, Adrian",
-        "dcid": 32456723,
+        "dcid": 3245672,
         "grade_level": 6,
         "gender": "other"
+    },
+    {
+        "firstlast": "Bell, Chris",
+        "dcid": 6432723,
+        "grade_level": 7,
+        "gender": "female"
     }
 ]

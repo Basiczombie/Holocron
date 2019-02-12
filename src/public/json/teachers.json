@@ -1,20 +1,30 @@
 [
     {
-        "name": "Mr. Smith"
+        "name": "Mrs. Marry",
+        "grade_level": 4
     },
     {
-        "name": "Mrs. Kemp"
+        "name": "Ms. Booth",
+        "grade_level": 5
     },
     {
-        "name": "Ms. Jones"
+        "name": "Mr. Kenneth",
+        "grade_level": 6
     },
     {
-        "name": "Mr. Dale"
+        "name": "Mr. Smith",
+        "grade_level": 0
     },
     {
-        "name": "Mrs. Marry"
+        "name": "Mrs. Kemp",
+        "grade_level": 1
     },
     {
-        "name": "Ms. Booth"
+        "name": "Ms. Jones",
+        "grade_level": 2
+    },
+    {
+        "name": "Mr. Dale",
+        "grade_level": 3
     }
 ]
