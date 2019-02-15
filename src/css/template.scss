@@ -2,7 +2,7 @@
 $blue: #64b5f6;
 $pink: #ff80ab;
 $orange: #ffcc80;
-$blue-grey: #607d8b;
+$dark-grey: #757575;
 $black-grey: #606c76;
 
 // .index related sass
@@ -50,7 +50,7 @@ $black-grey: #606c76;
     blockquote {
         font-weight: 400;
         color: black;
-        border-color: $blue-grey;
+        border-color: $dark-grey;
     }
     blockquote.blue {
         background: $blue;
