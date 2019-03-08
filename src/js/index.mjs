@@ -3,28 +3,49 @@ import 'dragula_css'
 import 'tingle_css'
 import '../css/template.scss'
 import 'milligram'
-import 'whatwg-fetch'
+import fetch from 'isomorphic-fetch'
 import tingle from 'tingle.js'
 import dragula from 'dragula'
-import _ from 'lodash/array'
-import students from '../public/json/students.json'
-import teachers from '../public/json/teachers.json'
+import _ from 'lodash'
+import students from '../public/json/studentsql.json'
 
 $(() => {
   // Required element variables
   let teachersElm = document.querySelector('#teachers')
   let studentElm = document.querySelector('#students')
   let btnGroup = document.querySelector('#btn-group')
-  const gradeLevel = [0, 1, 2, 3, 4, 5, 6, 'multi']
+  const gradeLevel = [0, 1, 2, 3, 4, 5, 6, 7]
 
   // Data from PS
-  let studentFetch = students
-  let teacherFetch = teachers
+  let studentFetch = fetch(students)
 
   // List of containers to watch.
   let containers = [
     document.querySelector('#students')
   ]
+
+  // Dynamically set Students.
+  /**
+   * @todo Make studentRender to be more generic.
+   * @todo Rework studentRender to work on grade click.
+   * @todo Enable filtering on the main student list by grade.
+  */
+  // Takes PS Data pull and proccesses it into sessionStorage.
+  const studentProcess = () => {
+    let studentList = []
+    Object.entries(studentFetch).forEach(([key, value]) => {
+      let studentData = {
+        'lastfirst': value.lastfirst,
+        'dcid': value.dcid,
+        'grade_level': parseInt(value.grade_level),
+        'gender': value.gender
+      }
+      studentList.push(studentData)
+    })
+    // Update lists in session storage.
+    sessionStorage.setItem('studentEntry', JSON.stringify(studentList))
+  }
+
   // Build list from session storage or from memory
   const teacherBuildList = () => {
     if (!sessionStorage.getItem('teacherEntry')) {
@@ -33,8 +54,18 @@ $(() => {
       return JSON.parse(sessionStorage.getItem('teacherEntry'))
     }
   }
+
+  const studentBuildList = () => {
+    if (!sessionStorage.getItem('studentEntry')) {
+      studentProcess()
+      return sessionStorage.getItem('studentEntry')
+    } else {
+      return sessionStorage.getItem('studentEntry')
+    }
+  }
+
   let teacherEntry = teacherBuildList()
-  let studentEntry = []
+  let studentEntry = studentBuildList()
 
   // Modal configuration and html injection
   let modal = new tingle.modal({
@@ -82,7 +113,7 @@ $(() => {
               <option value="4">4</option>
               <option value="5">5</option>
               <option value="6">6</option>
-              <option value="7">multi</option>
+              <option value="7">Multi</option>
             </select>
         </div>
       </div>
@@ -118,11 +149,19 @@ $(() => {
     teacherProcess(teacher, teacherGrade)
   })
 
+  // Grade btn-group eventListeners
+  /**
+   * @todo Create a generic eventListener to control grade filtering
+  */
+
   // Generate grade selection btn-group and inject into DOM.
   gradeLevel.forEach((element) => {
     let grade = element
     if (parseInt(element) === 0) {
       grade = 'K'
+    }
+    if (parseInt(element) === 7) {
+      grade = 'MULTI'
     }
     let btnGroupTemplate = `
       <div class="column">
@@ -133,14 +172,25 @@ $(() => {
   })
 
   // Clear the given elements innerHtml
-  const clear = (elem) => {
-    while (elem.firstChild) {
-      elem.removeChild(teachersElm.firstChild)
+  /**
+   * @todo Fix clear to be more generic.
+   * @todo Allow clear to clear both teacher and students
+   */
+  const clear = (elem, source) => {
+    if (source === 'student') {
+      while (elem.lastChild.id !== 'student-header') {
+        elem.removeChild(studentElm.lastChild)
+      }
+    } else if (source === 'teacher') {
+      while (elem.lastChild) {
+        elem.removeChild(teachersElm.lastChild)
+      }
     }
   }
 
-  // Dynamically set Students.
+  // Renders students into DOM
   const studentRender = (studentList) => {
+    clear(studentElm, 'student')
     studentList.forEach(([key, value]) => {
       let gender
       // Determine gender color based on provided gender
@@ -151,56 +201,40 @@ $(() => {
       } else {
         gender = 'orange'
       }
-      let studentData = {
-        'lastfirst': value.lastfirst,
-        'dcid': value.dcid,
-        'grade_level': value.grade_level,
-        'gender': value.gender
-      }
       let studentTemplate = `
-        <div id="${value.dcid}" class="student">
+        <div id="${value.dcid}" class="student mix" data-grade="grade-${value.grade_level + 1}">
           <blockquote class="${gender}">
             ${value.lastfirst}<br>
             Gender: ${value.gender}
           </blockquote>
         </div>
       `
-      studentEntry.push(studentData)
       studentElm.insertAdjacentHTML('beforeend', `${studentTemplate}`)
     })
-    // Update lists in session storage.
-    sessionStorage.setItem('studentEntry', JSON.stringify(studentEntry))
   }
-  // Dynamically set Students
-  // StudentProcess builds and set Student data for render.
-  const studentProcess = () => {
-    if (!sessionStorage.getItem('studentEntry')) {
-      studentRender(Object.entries(studentFetch))
-    } else {
-      studentRender(Object.entries(JSON.parse(sessionStorage.getItem('studentEntry'))))
-    }
-  }
-  // Call for first time use
-  studentProcess()
 
   // Dynamically set Teachers.
   // TeacherProcess builds and set Teacher data to store in memory and session
   const teacherProcess = (name, grade) => {
     let teacher = {
       'name': name,
-      'grade_level': grade,
+      'grade_level': parseInt(grade),
       'students': []
     }
     teacherEntry.push(teacher)
     sessionStorage.setItem('teacherEntry', JSON.stringify(teacherEntry))
-    clear(teachersElm)
-    teacherRender()
   }
+
   // TeacherRender injects teacher template into the DOM as well as any students associated
-  const teacherRender = () => {
-    let teacherList = Object.entries(teacherEntry)
+  /**
+   * @todo Make teacherRender to be more generic.
+   * @todo Rework teacherRender to work on grade click.
+   * @todo Enable filtering on the main teacher list by grade.
+  */
+  const teacherRender = (teacherList) => {
     let count = 0
     let rowCount = 0
+    clear(teachersElm, 'teacher')
     // Loop through each teacher and inject the teacher template.
     teacherList.forEach(([key, value]) => {
       // If there are more than 3 Teachers per row create and inject a new row
@@ -214,7 +248,7 @@ $(() => {
       let rowInsert = document.querySelector(`#teacher-row-${rowCount}`)
       let teacherNumber = `teacher-${key}`
       let teacherTemplate = `
-        <div id="${teacherNumber}" class="column teacher drake-container" data-grade="${value.grade_level}" data-title="teacher">
+        <div id="${teacherNumber}" class="column teacher drake-container mix" data-grade="grade-${value.grade_level}" data-title="teacher">
           <h4 class="no-drag">${value.name}<span class="count"></span>
         </div>
       `
@@ -233,7 +267,7 @@ $(() => {
             gender = 'orange'
           }
           let studentTemplate = `
-            <div id="${value.dcid}" class="student">
+            <div id="${value.dcid}" class="student mix" data-grade="grade-${value.grade_level + 1}>
               <blockquote class="${gender}">
                 ${value.lastfirst}<br>
                 Gender: ${value.gender}
@@ -248,8 +282,51 @@ $(() => {
     })
   }
 
-  // Call for first time use
-  teacherRender()
+  // StudentByGrade builds pulls Student data for render.
+  const studentByGrade = (grade) => {
+    let studentStore = JSON.parse(sessionStorage.getItem('studentEntry'))
+    studentRender(Object.entries(_.filter(studentStore, { 'grade_level': grade })))
+  }
+
+  // TeacherByGrade builds pulls Teacher data for render.
+  const teacherByGrade = (grade) => {
+    let teacherStore = JSON.parse(sessionStorage.getItem('teacherEntry'))
+    teacherRender(Object.entries(_.filter(teacherStore, { 'grade_level': grade })))
+  }
+
+  // Btn-group event listeners
+  document.getElementById('button-0').addEventListener('click', function () {
+    studentByGrade(-1)
+    teacherByGrade(0)
+  })
+  document.getElementById('button-1').addEventListener('click', function () {
+    studentByGrade(0)
+    teacherByGrade(1)
+  })
+  document.getElementById('button-2').addEventListener('click', function () {
+    studentByGrade(1)
+    teacherByGrade(2)
+  })
+  document.getElementById('button-3').addEventListener('click', function () {
+    studentByGrade(2)
+    teacherByGrade(3)
+  })
+  document.getElementById('button-4').addEventListener('click', function () {
+    studentByGrade(3)
+    teacherByGrade(4)
+  })
+  document.getElementById('button-5').addEventListener('click', function () {
+    studentByGrade(4)
+    teacherByGrade(5)
+  })
+  document.getElementById('button-6').addEventListener('click', function () {
+    studentByGrade(5)
+    teacherByGrade(6)
+  })
+  document.getElementById('button-7').addEventListener('click', function () {
+    studentRender(Object.entries(JSON.parse(sessionStorage.getItem('studentEntry'))))
+    teacherByGrade(7)
+  })
 
   // Drag and Drop functionallity
   let drake = dragula({
@@ -330,6 +407,7 @@ $(() => {
       sessionStorage.setItem('teacherEntry', JSON.stringify(teacherEntry))
     }
   })
+
   // Rebuild teacher JSON data from DOM element
   function buildTeacher (el) {
     // Clone element to prevent actual DOM manipulation
